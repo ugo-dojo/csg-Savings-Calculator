@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outsourcing Savings Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #1e3a5f;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .input-section {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .slider-container {
+            position: relative;
+            padding: 10px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #fbbf24 0%, #f59e0b 100%);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f59e0b;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.6);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f59e0b;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.6);
+        }
+
+        .slider-value {
+            display: inline-block;
+            background: #f59e0b;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-top: 15px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .results-section {
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .results-section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .results-title {
+            text-align: center;
+            color: #f59e0b;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px dotted #e5e7eb;
+        }
+
+        .calculation-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: nowrap;
+            padding: 30px;
+            border: 3px dotted #d1d5db;
+            border-radius: 15px;
+            background: #fafafa;
+        }
+
+        .cost-item {
+            text-align: center;
+        }
+
+        .cost-label {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .cost-value {
+            color: #1e3a5f;
+            font-size: 1.5rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .operator {
+            color: #9ca3af;
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .savings-item .cost-label {
+            color: #059669;
+        }
+
+        .savings-highlight {
+            color: #10b981 !important;
+            font-size: 2rem !important;
+            font-weight: 800 !important;
+        }
+
+        .contact-btn {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .calculation-display {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .cost-label {
+                font-size: 0.75rem;
+            }
+
+            .cost-value {
+                font-size: 1.2rem;
+            }
+
+            .operator {
+                font-size: 2rem;
+            }
+
+            .savings-value {
+                font-size: 2.5rem;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Outsourcing Savings Simulator</h1>
+            <p>Calculate your potential savings by outsourcing customs resources</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="positions">Number of customs resources to externalise</label>
+                <div class="slider-container">
+                    <input type="range" min="1" max="10" value="1" class="slider" id="positions">
+                    <div style="text-align: center;">
+                        <span class="slider-value" id="positionsValue">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" id="calculateBtn">Calculate Savings</button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <h2 class="results-title">Your Potential Savings</h2>
+
+            <div class="calculation-display">
+                <div class="cost-item">
+                    <div class="cost-label">In-house Full-Loaded Cost</div>
+                    <div class="cost-value" id="onshoreCost">€110,000</div>
+                </div>
+
+                <div class="operator">−</div>
+
+                <div class="cost-item">
+                    <div class="cost-label">Full Costs of Outsourcing</div>
+                    <div class="cost-value" id="outsourcingCost">€79,200</div>
+                </div>
+
+                <div class="operator">=</div>
+
+                <div class="cost-item savings-item">
+                    <div class="cost-label">Estimated Savings</div>
+                    <div class="cost-value savings-highlight" id="estimatedSavings">€30,800</div>
+                </div>
+            </div>
+
+            <button class="contact-btn" onclick="window.open('mailto:contact@example.com', '_blank')">
+                Speak to an expert advisor today!
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Données du simulateur
+        const savingsData = {
+            1: { onshore: 110000, outsourcing: 79200, savings: 30800 },
+            2: { onshore: 220000, outsourcing: 158400, savings: 61600 },
+            3: { onshore: 330000, outsourcing: 225000, savings: 105000 },
+            4: { onshore: 440000, outsourcing: 300000, savings: 140000 },
+            5: { onshore: 550000, outsourcing: 375000, savings: 175000 },
+            6: { onshore: 660000, outsourcing: 430000, savings: 230000 },
+            7: { onshore: 770000, outsourcing: 500000, savings: 270000 },
+            8: { onshore: 880000, outsourcing: 560000, savings: 320000 },
+            9: { onshore: 990000, outsourcing: 620000, savings: 370000 },
+            10: { onshore: 1100000, outsourcing: 680000, savings: 420000 }
+        };
+
+        const slider = document.getElementById('positions');
+        const sliderValue = document.getElementById('positionsValue');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultsSection = document.getElementById('resultsSection');
+        const onshoreCost = document.getElementById('onshoreCost');
+        const outsourcingCost = document.getElementById('outsourcingCost');
+        const estimatedSavings = document.getElementById('estimatedSavings');
+
+        // Formater les nombres en euros
+        function formatEuro(number) {
+            return '€' + number.toLocaleString('fr-FR');
+        }
+
+        // Mettre à jour la valeur affichée du slider
+        slider.addEventListener('input', function() {
+            sliderValue.textContent = this.value;
+        });
+
+        // Calculer et afficher les économies
+        calculateBtn.addEventListener('click', function() {
+            const positions = parseInt(slider.value);
+            const data = savingsData[positions];
+
+            // Mettre à jour les valeurs
+            onshoreCost.textContent = formatEuro(data.onshore);
+            outsourcingCost.textContent = formatEuro(data.outsourcing);
+            estimatedSavings.textContent = formatEuro(data.savings);
+
+            // Afficher la section des résultats avec animation
+            resultsSection.classList.add('show');
+
+            // Scroll vers les résultats
+            setTimeout(() => {
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        });
+
+        // Calculer automatiquement au chargement
+        window.addEventListener('load', function() {
+            calculateBtn.click();
+        });
+    </script>
+</body>
+</html>
